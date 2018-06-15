@@ -73,11 +73,31 @@ function handleNewItemSubmit() {
   
 }
 
+function toggleCheckedForListItem(itemIndex) {
+  console.log('Toggling checked property for item at index'  + itemIndex);
+  STORE[itemIndex].checked = !STORE[itemIndex].checked;
+}
+
+function getItemIndexFromElement(item) {
+  const itemIndexString = $(item)
+    .closest('.js-item-index-element')
+    .attr('data-item-index');
+  return parseInt(itemIndexString, 10);
+}
 
 function handleItemCheckClicked() {
   // this function will be responsible for when users click the "check" button on
   // a shopping list item.
-  console.log('`handleItemCheckClicked` ran');
+  // Listen for when a user clicks the 'check' button on an item.
+  // Retrieve the item's index in STORE from the data attribute.
+  // Toggle the checked property for the item at that index in STORE.
+  // Re-render the shopping list.
+  $('.js-shopping-list').on('click', `.js-item-toggle`, event => {
+    console.log('`handleItemCheckClicked` ran');
+    const itemIndex = getItemIndexFromElement(event.currentTarget);
+    toggleCheckedForListItem(itemIndex);
+    renderShoppingList();
+  });
 }
 
 
