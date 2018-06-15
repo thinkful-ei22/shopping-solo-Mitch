@@ -10,7 +10,7 @@
 // we're pre-adding items to the shopping list so there's
 // something to see when the page first loads.
 const STORE = [
-  {name: "apples", checked: false},
+  {id: 1, name: "apples", checked: false},
   {name: "oranges", checked: false},
   {name: "milk", checked: true},
   {name: "bread", checked: false},
@@ -52,13 +52,6 @@ function addItemToShoppingList(itemName) {
 }
 
 function handleNewItemSubmit() {
-  // this function will be responsible for when users add a new shopping list item
-  //Listen for when users submit a new list item. And then...
-  // Get the name of the new item from the text input in our new item form
-  // Clear out the value from the input so eventually new items can be added
-  // Create an object representing the new item and add it to the shopping list STORE
-  // Re-render the shopping list in the DOM in light of the updated STORE.
-
   $('#js-shopping-list-form').submit(function(event) {
     event.preventDefault();
 
@@ -116,6 +109,33 @@ function deleteItemFromShoppingList(itemIndex){
   STORE.splice(itemIndex,1);
 }
 
+function handleFilterList(){
+  $('input[type=checkbox]').on('change', function(){
+    console.log($(this).is(':checked'));
+    if ($(this).is(':checked') === true) {
+      //alert('check');
+      $('.shopping-item__checked').closest('li').hide('slow');
+    }
+    else {
+      //alert('unchecked');
+      $('.shopping-item__checked').closest('li').show('slow');
+    }
+  });
+}
+
+function handleFilterSearch(){
+  $('#filter-search-form').submit(function(event) {
+    event.preventDefault();
+
+    const searchName = $('.js-filter-search').val();
+    console.log(searchName);
+    //$('.js-filter-search').val('');
+  });
+
+}
+
+
+
 // this function will be our callback when the page loads. it's responsible for
 // initially rendering the shopping list, and activating our individual functions
 // that handle new item submission and user clicks on the "check" and "delete" buttons
@@ -125,7 +145,8 @@ function handleShoppingList() {
   handleNewItemSubmit();
   handleItemCheckClicked();
   handleDeleteItemClicked();
-
+  handleFilterList();
+  handleFilterSearch();
 }
 
 // when the page loads, call `handleShoppingList`

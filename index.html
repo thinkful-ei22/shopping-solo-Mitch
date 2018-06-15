@@ -6,11 +6,21 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css">
   <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
   <link rel="stylesheet" href="index.css">
+  <link rel="stylesheet" href="slider.css">
 </head>
 
 <body>
     <div class="container">
         <h1>Shopping List</h1>
+        <form id ="filter-search-form">
+          <label class="switch">
+            <input type="checkbox">
+            <span class="slider round"></span>
+          </label>
+          <input type="text" name="filter-search" class="js-filter-search" placeholder="Search..">
+          <button type="sumbit">Filter</button>
+        </form>
+        <h2></h2>
         <form id="js-shopping-list-form">
             <label for="shopping-list-entry">Add an item</label>
             <input type="text" name="shopping-list-entry" class="js-shopping-list-entry" placeholder="e.g., broccoli">
