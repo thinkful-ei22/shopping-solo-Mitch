@@ -92,7 +92,7 @@ function handleItemCheckClicked() {
   // Retrieve the item's index in STORE from the data attribute.
   // Toggle the checked property for the item at that index in STORE.
   // Re-render the shopping list.
-  $('.js-shopping-list').on('click', `.js-item-toggle`, event => {
+  $('.js-shopping-list').on('click', '.js-item-toggle', event => {
     console.log('`handleItemCheckClicked` ran');
     const itemIndex = getItemIndexFromElement(event.currentTarget);
     toggleCheckedForListItem(itemIndex);
