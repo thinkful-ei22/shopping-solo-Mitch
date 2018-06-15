@@ -46,10 +46,31 @@ function renderShoppingList() {
   $('.js-shopping-list').html(shoppingListItemsString);
 }
 
+function addItemToShoppingList(itemName) {
+  console.log(`Adding "${itemName}" to shopping list`);
+  STORE.push({name: itemName, checked: false});
+}
 
 function handleNewItemSubmit() {
   // this function will be responsible for when users add a new shopping list item
-  console.log('`handleNewItemSubmit` ran');
+  //Listen for when users submit a new list item. And then...
+  // Get the name of the new item from the text input in our new item form
+  // Clear out the value from the input so eventually new items can be added
+  // Create an object representing the new item and add it to the shopping list STORE
+  // Re-render the shopping list in the DOM in light of the updated STORE.
+
+  $('#js-shopping-list-form').submit(function(event) {
+    event.preventDefault();
+
+    const newItemName = $('.js-shopping-list-entry').val();
+    console.log(newItemName);
+    $('.js-shopping-list-entry').val('');
+    addItemToShoppingList(newItemName);
+    renderShoppingList();
+
+  });
+  // console.log('`handleNewItemSubmit` ran');
+  
 }
 
 
