@@ -135,7 +135,7 @@ function handleFilterSearch(){
       renderShoppingList();
     } 
     else {
-      let filteredList = STORE.items.filter(STORE => STORE.name.includes(searchName));
+      let filteredList = STORE.items.filter(item => item.name.includes(searchName));
       renderShoppingList(filteredList);
     }
   });
