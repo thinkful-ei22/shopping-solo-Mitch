@@ -30,7 +30,7 @@ function generateItemElement(item) {
 }
 
 function generateShoppingItemsString(shoppingList) {
-  console.log("Generating shopping list element");
+  //console.log("Generating shopping list element");
   const items = shoppingList.map((item) => generateItemElement(item));
   return items.join('');
 }
@@ -39,11 +39,11 @@ function renderShoppingList(list = STORE.items) {
   // render the shopping list in the DOM
   //console.log('`renderShoppingList` ran');
   if (STORE.hideChecked === true) {
-    let filteredItems = STORE.items.filter(item => item.checked === false);
+    let filteredItems = list.filter(item => item.checked === false);
     let filteredItemsChecked = generateShoppingItemsString(filteredItems);
     $('.js-shopping-list').html(filteredItemsChecked); 
   } else {
-    const shoppingListItemsString = generateShoppingItemsString(STORE.items);
+    const shoppingListItemsString = generateShoppingItemsString(list);
     // insert that HTML into the DOM
     $('.js-shopping-list').html(shoppingListItemsString);  
   }
@@ -54,7 +54,7 @@ function findItemByID(id) {
 }
 
 function addItemToShoppingList(itemName) {
-  console.log(`Adding "${itemName}" to shopping list`);
+  //console.log(`Adding "${itemName}" to shopping list`);
   //how to handle NEXT ID
   STORE.items.push({id: cuid(), name: itemName, checked: false});
 }
@@ -110,37 +110,33 @@ function deleteItemFromShoppingList(id){
 
 
 // Filter items with toggle switch
-function handleFilterList(){
+function handleFilterSwitch(){
   $('input[type=checkbox]').on('change', function(){
     console.log($(this).is(':checked'));
+    event.preventDefault();
     if ($(this).is(':checked') === true) {
       STORE.hideChecked = true;
-      renderShoppingList();
+      //renderShoppingList();
     }
     else {
       STORE.hideChecked = false;
-      renderShoppingList();
+      //renderShoppingList();
     }
+    renderShoppingList();
   });
 }
 
 // Filter items by keyword or partial
-function filterList(filter) {
-  if (STORE.items['name'].includes(filter)) {
-    return true;
-  }
-}
 function handleFilterSearch(){
   $('#filter-search-form').submit(function(event) {
     event.preventDefault();
     const searchName = $('.js-filter-search').val();
-    console.log(searchName);
+    //console.log(searchName);
     if (searchName === '') {
       renderShoppingList();
     } 
     else {
-      let filteredList = STORE.items.filter(filterList(searchName));
-      console.log(filteredList);
+      let filteredList = STORE.items.filter(STORE => STORE.name.includes(searchName));
       renderShoppingList(filteredList);
     }
   });
@@ -173,7 +169,7 @@ function handleShoppingList() {
   handleNewItemSubmit();
   handleItemCheckClicked();
   handleDeleteItemClicked();
-  handleFilterList();
+  handleFilterSwitch();
   handleFilterSearch();
   handleEditItemClicked();
 }
