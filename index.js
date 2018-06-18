@@ -71,7 +71,8 @@ function handleNewItemSubmit() {
 
 function toggleCheckedForListItem(id) {
   console.log('Toggling checked property for item at id ' + id);
-  STORE.items.find(id).checked = !STORE.items[id].checked;
+  const item = STORE.items.find(x=> x.id === id);
+  item.checked = !item.checked;
 }
 
 function getItemIDFromElement(item) {
@@ -100,7 +101,7 @@ function handleDeleteItemClicked() {
 }
 
 function deleteItemFromShoppingList(id){
-  const item = STORE.items.findIndex(i => i.id === id);
+  const item = STORE.items.find(x => x.id === id);
   STORE.items.splice(item, 1);
 }
 
