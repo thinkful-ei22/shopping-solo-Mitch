@@ -11,9 +11,9 @@ const STORE = {
   hideChecked: false
 };
 
-function generateItemElement(item, template) {
+function generateItemElement(item) {
   return `
-    <li class="js-item-index-element" data-item-index="${item.id}">
+    <li class="js-item-index-element" data-item-id="${item.id}">
       <span class="shopping-item js-shopping-item ${item.checked ? 'shopping-item__checked' : ''}">${item.name}</span>
       <div class="shopping-item-controls">
         <button class="shopping-item-toggle js-item-toggle">
@@ -22,7 +22,7 @@ function generateItemElement(item, template) {
         <button class="shopping-item-delete js-item-delete">
           <span class="button-label">delete</span>
         </button>
-        <button class="shoppoing-item-edit js-item-edit">
+        <button class="shopping-item-edit js-item-edit">
           <span class="button-label">edit</span>
         </button>
       </div>
@@ -75,7 +75,7 @@ function toggleCheckedForListItem(id) {
 }
 
 function getItemIDFromElement(item) {
-  return $(STORE.items.id.closest('js-item-index-element').data('id');
+  return $(item).closest('.js-item-index-element').data('item-id');
 }
 
 function handleItemCheckClicked() {
@@ -94,12 +94,14 @@ function handleDeleteItemClicked() {
     // alert('`handleDeleteItemClicked` ran');
     const id = getItemIDFromElement(event.currentTarget);
     deleteItemFromShoppingList(id);
+    console.log(id);
     renderShoppingList();
   });
 }
 
 function deleteItemFromShoppingList(id){
-  STORE.items.splice(id,1);
+  const item = STORE.items.findIndex(i => i.id === id);
+  STORE.items.splice(item, 1);
 }
 
 
@@ -140,7 +142,8 @@ function handleFilterSearch(){
 // Edit item names
 function editItemName(id, input) {
   console.log(`Item name changed to ${input}`);
-  STORE.items[id].name = input;
+  const item = STORE.items.find(x => x.id === id);
+  item.name = input;
 }
 
 function handleEditItemClicked() {
