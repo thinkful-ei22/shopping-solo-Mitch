@@ -37,7 +37,7 @@ function generateShoppingItemsString(shoppingList) {
 
 function renderShoppingList(list = STORE.items) {
   // render the shopping list in the DOM
-  console.log('`renderShoppingList` ran');
+  //console.log('`renderShoppingList` ran');
   if (STORE.hideChecked === true) {
     let filteredItems = STORE.items.filter(item => item.checked === false);
     let filteredItemsChecked = generateShoppingItemsString(filteredItems);
@@ -47,6 +47,10 @@ function renderShoppingList(list = STORE.items) {
     // insert that HTML into the DOM
     $('.js-shopping-list').html(shoppingListItemsString);  
   }
+}
+
+function findItemByID(id) {
+  return STORE.items.find(x => x.id === id);
 }
 
 function addItemToShoppingList(itemName) {
@@ -70,9 +74,8 @@ function handleNewItemSubmit() {
 }
 
 function toggleCheckedForListItem(id) {
-  console.log('Toggling checked property for item at id ' + id);
-  const item = STORE.items.find(x=> x.id === id);
-  item.checked = !item.checked;
+  //console.log('Toggling checked property for item at id ' + id);
+  findItemByID(id).checked = !findItemByID(id).checked;
 }
 
 function getItemIDFromElement(item) {
@@ -81,7 +84,7 @@ function getItemIDFromElement(item) {
 
 function handleItemCheckClicked() {
   $('.js-shopping-list').on('click', '.js-item-toggle', event => {
-    console.log('`handleItemCheckClicked` ran');
+    //console.log('`handleItemCheckClicked` ran');
     const id = getItemIDFromElement(event.currentTarget);
     toggleCheckedForListItem(id);
     renderShoppingList();
@@ -101,7 +104,7 @@ function handleDeleteItemClicked() {
 }
 
 function deleteItemFromShoppingList(id){
-  const item = STORE.items.find(x => x.id === id);
+  const item = findItemByID(id);
   STORE.items.splice(item, 1);
 }
 
@@ -113,17 +116,20 @@ function handleFilterList(){
     if ($(this).is(':checked') === true) {
       STORE.hideChecked = true;
       renderShoppingList();
-      //$('.shopping-item__checked').closest('li').hide('slow');
     }
     else {
       STORE.hideChecked = false;
       renderShoppingList();
-      //$('.shopping-item__checked').closest('li').show('slow');
     }
   });
 }
 
 // Filter items by keyword or partial
+function filterList(filter) {
+  if (STORE.items['name'].includes(filter)) {
+    return true;
+  }
+}
 function handleFilterSearch(){
   $('#filter-search-form').submit(function(event) {
     event.preventDefault();
@@ -133,7 +139,8 @@ function handleFilterSearch(){
       renderShoppingList();
     } 
     else {
-      let filteredList = STORE.items.filter(item => item.name.includes(searchName));
+      let filteredList = STORE.items.filter(filterList(searchName));
+      console.log(filteredList);
       renderShoppingList(filteredList);
     }
   });
@@ -142,9 +149,8 @@ function handleFilterSearch(){
 
 // Edit item names
 function editItemName(id, input) {
-  console.log(`Item name changed to ${input}`);
-  const item = STORE.items.find(x => x.id === id);
-  item.name = input;
+  //console.log(`Item name changed to ${input}`);
+  findItemByID(id).name = input;
 }
 
 function handleEditItemClicked() {
