@@ -98,13 +98,12 @@ function handleDeleteItemClicked() {
     // alert('`handleDeleteItemClicked` ran');
     const id = getItemIDFromElement(event.currentTarget);
     deleteItemFromShoppingList(id);
-    console.log(id);
     renderShoppingList();
   });
 }
 
 function deleteItemFromShoppingList(id){
-  const item = findItemByID(id);
+  const item = STORE.items.map(function(x) { return x.id; }).indexOf(id);
   STORE.items.splice(item, 1);
 }
 
