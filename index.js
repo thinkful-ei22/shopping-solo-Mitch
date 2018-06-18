@@ -19,17 +19,20 @@ function generateItemElement(item, itemIndex, template) {
         <button class="shopping-item-delete js-item-delete">
             <span class="button-label">delete</span>
         </button>
+        <button class="shopping-item-edit js-item-edit">
+          <span class="button-label">edit</span>
+        </button>
       </div>
     </li>`;
 }
 
 function generateShoppingItemsString(shoppingList) {
-  console.log("Generating shopping list element");
+  console.log('Generating shopping list element');
   const items = shoppingList.map((item, index) => generateItemElement(item, index));
   return items.join('');
 }
 
-function renderShoppingList(list) {
+function renderShoppingList(list = STORE) {
   // render the shopping list in the DOM
   console.log('`renderShoppingList` ran');
   const shoppingListItemsString = generateShoppingItemsString(list);
@@ -50,7 +53,7 @@ function handleNewItemSubmit() {
     console.log(newItemName);
     $('.js-shopping-list-entry').val('');
     addItemToShoppingList(newItemName);
-    renderShoppingList(STORE);
+    renderShoppingList();
 
   });
   // console.log('`handleNewItemSubmit` ran');
@@ -74,7 +77,7 @@ function handleItemCheckClicked() {
     console.log('`handleItemCheckClicked` ran');
     const itemIndex = getItemIndexFromElement(event.currentTarget);
     toggleCheckedForListItem(itemIndex);
-    renderShoppingList(STORE);
+    renderShoppingList();
   });
 }
 
@@ -86,7 +89,7 @@ function handleDeleteItemClicked() {
     // alert('`handleDeleteItemClicked` ran');
     const itemIndex = getItemIndexFromElement(event.currentTarget);
     deleteItemFromShoppingList(itemIndex);
-    renderShoppingList(STORE);
+    renderShoppingList();
   });
 }
 
@@ -106,7 +109,7 @@ function handleFilterList(){
   });
 }
 
-
+// Filter items by keyword or partial
 function handleFilterSearch(){
   $('#filter-search-form').submit(function(event) {
     event.preventDefault();
@@ -115,7 +118,7 @@ function handleFilterSearch(){
     console.log(searchName);
 
     if (searchName === '') {
-      renderShoppingList(STORE);
+      renderShoppingList();
     } 
     else {
       let filteredList = STORE.filter(STORE => STORE.name.includes(searchName));
@@ -125,19 +128,33 @@ function handleFilterSearch(){
 
 }
 
+//Edit item names 
+function editItemName(index, input) {
+  console.log(`Item name changed to ${input}`);
+  STORE[index].name = input;
+}
 
+function handleEditItemClicked() {
+  $('.js-shopping-list').on('click', '.js-item-edit', event => {
+    const index = getItemIndexFromElement(event.currentTarget);
+    const input = prompt('Edit item text');
+    editItemName(index, input);
+    renderShoppingList();
+  });
+}
 
 // this function will be our callback when the page loads. it's responsible for
 // initially rendering the shopping list, and activating our individual functions
 // that handle new item submission and user clicks on the "check" and "delete" buttons
 // for individual shopping list items.
 function handleShoppingList() {
-  renderShoppingList(STORE);
+  renderShoppingList();
   handleNewItemSubmit();
   handleItemCheckClicked();
   handleDeleteItemClicked();
   handleFilterList();
   handleFilterSearch();
+  handleEditItemClicked();
 }
 
 // when the page loads, call `handleShoppingList`
