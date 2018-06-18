@@ -1,23 +1,29 @@
 'use strict';
 
-const STORE = [
-  {name: 'apples', checked: false},
-  {name: 'oranges', checked: false},
-  {name: 'milk', checked: true},
-  {name: 'bread', checked: false},
-  {name: 'butter', checked: true}
-];
+const STORE = {
+  items: [
+    {id: cuid(), name: 'apples', checked: false},
+    {id: cuid(), name: 'oranges', checked: false},
+    {id: cuid(), name: 'milk', checked: true},
+    {id: cuid(), name: 'bread', checked: false},
+    {id: cuid(), name: 'butter', checked: true}
+  ],
+  hideChecked: false
+};
 
-function generateItemElement(item, itemIndex, template) {
+function generateItemElement(item, template) {
   return `
-    <li class="js-item-index-element" data-item-index="${itemIndex}">
+    <li class="js-item-index-element" data-item-index="${item.id}">
       <span class="shopping-item js-shopping-item ${item.checked ? 'shopping-item__checked' : ''}">${item.name}</span>
       <div class="shopping-item-controls">
         <button class="shopping-item-toggle js-item-toggle">
-            <span class="button-label">check</span>
+          <span class="button-label">check</span>
         </button>
         <button class="shopping-item-delete js-item-delete">
-            <span class="button-label">delete</span>
+          <span class="button-label">delete</span>
+        </button>
+        <button class="shoppoing-item-edit js-item-edit">
+          <span class="button-label">edit</span>
         </button>
       </div>
     </li>`;
@@ -25,104 +31,125 @@ function generateItemElement(item, itemIndex, template) {
 
 function generateShoppingItemsString(shoppingList) {
   console.log("Generating shopping list element");
-  const items = shoppingList.map((item, index) => generateItemElement(item, index));
+  const items = shoppingList.map((item) => generateItemElement(item));
   return items.join('');
 }
 
-function renderShoppingList(list) {
+function renderShoppingList(list = STORE.items) {
   // render the shopping list in the DOM
   console.log('`renderShoppingList` ran');
-  const shoppingListItemsString = generateShoppingItemsString(list);
-  // insert that HTML into the DOM
-  $('.js-shopping-list').html(shoppingListItemsString);
+  if (STORE.hideChecked === true) {
+    let filteredItems = STORE.items.filter(item => item.checked === false);
+    let filteredItemsChecked = generateShoppingItemsString(filteredItems);
+    $('.js-shopping-list').html(filteredItemsChecked); 
+  } else {
+    const shoppingListItemsString = generateShoppingItemsString(STORE.items);
+    // insert that HTML into the DOM
+    $('.js-shopping-list').html(shoppingListItemsString);  
+  }
 }
 
 function addItemToShoppingList(itemName) {
   console.log(`Adding "${itemName}" to shopping list`);
-  STORE.push({name: itemName, checked: false});
+  //how to handle NEXT ID
+  STORE.items.push({id: cuid(), name: itemName, checked: false});
 }
 
 function handleNewItemSubmit() {
   $('#js-shopping-list-form').submit(function(event) {
     event.preventDefault();
-
     const newItemName = $('.js-shopping-list-entry').val();
-    console.log(newItemName);
+    console.log('this is ' + newItemName);
     $('.js-shopping-list-entry').val('');
     addItemToShoppingList(newItemName);
-    renderShoppingList(STORE);
+    renderShoppingList();
 
   });
   // console.log('`handleNewItemSubmit` ran');
   
 }
 
-function toggleCheckedForListItem(itemIndex) {
-  console.log('Toggling checked property for item at index'  + itemIndex);
-  STORE[itemIndex].checked = !STORE[itemIndex].checked;
+function toggleCheckedForListItem(id) {
+  console.log('Toggling checked property for item at id ' + id);
+  STORE.items.find(id).checked = !STORE.items[id].checked;
 }
 
-function getItemIndexFromElement(item) {
-  const itemIndexString = $(item)
-    .closest('.js-item-index-element')
-    .attr('data-item-index');
-  return parseInt(itemIndexString, 10);
+function getItemIDFromElement(item) {
+  return $(STORE.items.id.closest('js-item-index-element').data('id');
 }
 
 function handleItemCheckClicked() {
   $('.js-shopping-list').on('click', '.js-item-toggle', event => {
     console.log('`handleItemCheckClicked` ran');
-    const itemIndex = getItemIndexFromElement(event.currentTarget);
-    toggleCheckedForListItem(itemIndex);
-    renderShoppingList(STORE);
+    const id = getItemIDFromElement(event.currentTarget);
+    toggleCheckedForListItem(id);
+    renderShoppingList();
   });
 }
-
 
 function handleDeleteItemClicked() {
   // this function will be responsible for when users want to delete a shopping list
   // item
   $('.js-shopping-list').on('click', '.js-item-delete', event => {
     // alert('`handleDeleteItemClicked` ran');
-    const itemIndex = getItemIndexFromElement(event.currentTarget);
-    deleteItemFromShoppingList(itemIndex);
-    renderShoppingList(STORE);
+    const id = getItemIDFromElement(event.currentTarget);
+    deleteItemFromShoppingList(id);
+    renderShoppingList();
   });
 }
 
-function deleteItemFromShoppingList(itemIndex){
-  STORE.splice(itemIndex,1);
+function deleteItemFromShoppingList(id){
+  STORE.items.splice(id,1);
 }
 
+
+// Filter items with toggle switch
 function handleFilterList(){
   $('input[type=checkbox]').on('change', function(){
     console.log($(this).is(':checked'));
     if ($(this).is(':checked') === true) {
-      $('.shopping-item__checked').closest('li').hide('slow');
+      STORE.hideChecked = true;
+      renderShoppingList();
+      //$('.shopping-item__checked').closest('li').hide('slow');
     }
     else {
-      $('.shopping-item__checked').closest('li').show('slow');
+      STORE.hideChecked = false;
+      renderShoppingList();
+      //$('.shopping-item__checked').closest('li').show('slow');
     }
   });
 }
 
-
+// Filter items by keyword or partial
 function handleFilterSearch(){
   $('#filter-search-form').submit(function(event) {
     event.preventDefault();
-
     const searchName = $('.js-filter-search').val();
     console.log(searchName);
-
     if (searchName === '') {
-      renderShoppingList(STORE);
+      renderShoppingList();
     } 
     else {
-      let filteredList = STORE.filter(STORE => STORE.name.includes(searchName));
+      let filteredList = STORE.items.filter(item => item.name.includes(searchName));
       renderShoppingList(filteredList);
     }
   });
 
+}
+
+// Edit item names
+function editItemName(id, input) {
+  console.log(`Item name changed to ${input}`);
+  STORE.items[id].name = input;
+}
+
+function handleEditItemClicked() {
+  $('.js-shopping-list').on('click', '.js-item-edit', event => {
+    const id = getItemIDFromElement(event.currentTarget);
+    const input = prompt('Edit item text:');
+    editItemName(id, input);
+    renderShoppingList();
+  });
 }
 
 
@@ -132,12 +159,13 @@ function handleFilterSearch(){
 // that handle new item submission and user clicks on the "check" and "delete" buttons
 // for individual shopping list items.
 function handleShoppingList() {
-  renderShoppingList(STORE);
+  renderShoppingList();
   handleNewItemSubmit();
   handleItemCheckClicked();
   handleDeleteItemClicked();
   handleFilterList();
   handleFilterSearch();
+  handleEditItemClicked();
 }
 
 // when the page loads, call `handleShoppingList`
